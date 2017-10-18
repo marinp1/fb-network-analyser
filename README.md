@@ -14,7 +14,7 @@ Uses [headless Chrome](https://github.com/GoogleChrome/puppeteer) for web scrapi
 
 **Haven't checked if the tool is against Facebook's terms of service, so use at your own risk!**
 
-1. Create file called **.env** to main directory add fill in correct data according to **.env.template** file (email address, password and facebook username).
+1. Create file called **.env** to main directory add fill in correct data according to **.env.template** file (email address, password and facebook username (starting with **/**)).
 2. Start web scraping with command `yarn fetch`.
 3. Wait until scraping is finished, it'll take some until script starts logging to console.
 4. Start visualization with command `yarn start`.
