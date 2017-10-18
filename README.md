@@ -2,6 +2,8 @@
 This tool creates a 1.5 degree network of your Facebook friends.
 Uses [headless Chrome](https://github.com/GoogleChrome/puppeteer) for web scraping to retrieve the data and [D3.js](https://d3js.org/) to display it. Application created on top of [create-react-app](https://github.com/facebookincubator/create-react-app).
 
+![My Facebook network](https://raw.githubusercontent.com/marinp1/fb-network-analyser/master/images/network.png "My Facebook Network")
+
 ## Features
 * Node size is based on the node's degree
 * Hovering over a node displays the name and node's degree in top-left corner.
