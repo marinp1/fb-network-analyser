@@ -8,7 +8,7 @@ const parser = require('./parser')
 
 const USER_EMAIL = process.env.FACEBOOK_USER_EMAIL;
 const PASSWORD = process.env.FACEBOOK_USER_PASSWORD;
-const USERNAME = process.env.FACEBOOK_USERNAME;
+const USERNAME = process.env.REACT_APP_FACEBOOK_USERNAME;
 
 const ALL_FRIENDS_PAGE_URL = `https://www.facebook.com/login/?next=https://www.facebook.com${USERNAME}/friends_all`;
 

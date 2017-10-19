@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const d3 = require("d3");
 
 const nodes = require('./data/nodes.json');
@@ -5,6 +7,8 @@ const links = require('./data/links.json');
 
 const width = window.innerWidth;
 const height = window.innerHeight;
+
+const USERNAME = process.env.REACT_APP_FACEBOOK_USERNAME;
 
 const svg = d3.select('svg')
   .attr('width', width)
@@ -19,21 +23,11 @@ function getNodeSize(node) {
 }
 
 function getEdgeColor(edge) {
-  if (edge.source === '/patrik.marin' || edge.target === '/patrik.marin') {
+  if (edge.source === USERNAME || edge.target === USERNAME) {
     return "#FF0000";
   } else {
     return "#333";
   }
-}
-
-function countCommonFriends(id) {
-  let count = 0;
-  for(let i = 0; i < links.length; i++){
-      if(links[i].target.id === id || links[i].source.id === id) {
-        count++;
-      }
-  }
-  return count;
 }
 
 export function createNetwork() {
