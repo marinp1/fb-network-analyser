@@ -22,6 +22,14 @@ function getNodeSize(node) {
   return Math.min(5, Math.max(1, node.degree / 50));
 }
 
+function getActiveNodeSize(node) {
+  return Math.min(5, Math.max(3, node.degree / 50));
+}
+
+function getNodeId(node) {
+  return node.id.replace('/','___').replace('.','___');
+}
+
 function getEdgeColor(edge) {
   if (edge.source === USERNAME || edge.target === USERNAME) {
     return "#FF0000";
@@ -29,6 +37,37 @@ function getEdgeColor(edge) {
     return "#333";
   }
 }
+
+const searchfield = document.getElementById("namesearch");
+
+function findNodeByName() {
+  // Reset
+  d3.selectAll('circle')
+    .attr('fill', '#333')
+    .attr('r', getNodeSize);
+
+  const name = searchfield.value.toLowerCase();
+
+  if (name.length === 0) {
+    return;
+  }
+
+  const validNodes = nodes.filter(node => node.name.toLowerCase().includes(name));
+  const validIds = validNodes.map(node => `#${getNodeId(node)}`);
+  const selector = validIds.join(', ');
+  
+  const selection = d3.selectAll(selector);
+
+  if (!selection.empty()) {
+    selection.each((d, i) => {
+      d3.select('#' + getNodeId(d))
+        .attr('fill', 'blue')
+        .attr('r', getActiveNodeSize);
+    });
+  }
+}
+
+searchfield.addEventListener('change', findNodeByName, false);
 
 export function createNetwork() {
   
@@ -60,6 +99,7 @@ export function createNetwork() {
   .selectAll('circle')
   .data(nodes)
   .enter().append('circle')
+    .attr('id', getNodeId)
     .attr('r', getNodeSize)
     .attr('fill', getNodeColor)
   .call(d3.drag()
