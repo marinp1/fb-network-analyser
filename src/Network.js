@@ -8,7 +8,9 @@ const links = require('./data/links.json');
 const width = window.innerWidth;
 const height = window.innerHeight;
 
-const USERNAME = process.env.REACT_APP_FACEBOOK_USERNAME;
+const USERNAME = process.env.REACT_APP_FACEBOOK_USERNAME.startsWith('/')
+  ? process.env.REACT_APP_FACEBOOK_USERNAME
+  : `/${process.env.REACT_APP_FACEBOOK_USERNAME}`;
 
 const svg = d3.select('svg')
   .attr('width', width)

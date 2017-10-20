@@ -8,7 +8,9 @@ const parser = require('./parser')
 
 const USER_EMAIL = process.env.FACEBOOK_USER_EMAIL;
 const PASSWORD = process.env.FACEBOOK_USER_PASSWORD;
-const USERNAME = process.env.REACT_APP_FACEBOOK_USERNAME;
+const USERNAME = process.env.REACT_APP_FACEBOOK_USERNAME.startsWith('/')
+  ? process.env.REACT_APP_FACEBOOK_USERNAME
+  : `/${process.env.REACT_APP_FACEBOOK_USERNAME}`;
 
 const DEBUG_MODE = process.argv[2] === '--debug';
 
