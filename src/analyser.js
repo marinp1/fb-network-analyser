@@ -52,8 +52,10 @@ for (link of links) {
 function getLocalClusteringCoefficient(id) {
   
   const neighbours = nodeMap.get(id).neighbours;
-  if (neighbours.length === 1) return -1;
+  if (neighbours.length === 1) return 0;
+
   let links = 0;
+
   for (w of neighbours) {
     for (u of neighbours) {
       if (_.contains(nodeMap.get(w).neighbours, u)) {
