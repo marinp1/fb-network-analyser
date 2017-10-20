@@ -10,6 +10,8 @@ const USER_EMAIL = process.env.FACEBOOK_USER_EMAIL;
 const PASSWORD = process.env.FACEBOOK_USER_PASSWORD;
 const USERNAME = process.env.REACT_APP_FACEBOOK_USERNAME;
 
+const DEBUG_MODE = process.argv[2] === '--debug';
+
 const ALL_FRIENDS_PAGE_URL = `https://www.facebook.com/login/?next=https://www.facebook.com${USERNAME}/friends_all`;
 
 const EMAIL_SELECTOR = '#email';
@@ -24,7 +26,7 @@ friendList.push(egocenter);
 (async () => {
 
   const browser = await puppeteer.launch({
-    headless: true, // set to false to observe and debug
+    headless: !DEBUG_MODE,
     timeout: 0,
     args: ['--disable-notifications']
   });
