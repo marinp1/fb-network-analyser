@@ -2,8 +2,11 @@ require('dotenv').config();
 
 const d3 = require("d3");
 
-const nodes = require('./data/nodes.json');
-const links = require('./data/links.json');
+const DATA_PATH = (process.env.REACT_APP_USE_DEMO_DATA === 'TRUE')
+  ? './example_data' : './data';
+
+const nodes = require(`${DATA_PATH}/nodes.json`);
+const links = require(`${DATA_PATH}/links.json`);
 
 const width = window.innerWidth;
 const height = window.innerHeight;
