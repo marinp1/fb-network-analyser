@@ -93,27 +93,28 @@ export function createNetwork() {
     .id(link => link.id));
 
   const linkElements = svg.append('g')
-  .selectAll('line')
-  .data(links)
-  .enter().append('line')
-    .attr('stroke-width', 0.05)
-    .attr('stroke', getEdgeColor)
+    .selectAll('line')
+    .data(links)
+    .enter().append('line')
+      .attr('stroke-width', 0.05)
+      .attr('stroke', getEdgeColor)
 
   const nodeElements = svg.append('g')
-  .selectAll('circle')
-  .data(nodes)
-  .enter().append('circle')
-    .attr('id', getNodeId)
-    .attr('r', getNodeSize)
-    .attr('fill', getNodeColor)
-  .call(d3.drag()
-    .on("start", dragstarted)
-    .on("drag", dragged)
-    .on("end", dragended))
-  .on('mouseover', (d, i) => {
-    textBox.text(d.name + " " + d.degree);
-    d3.event.stopPropagation();
-  });
+    .selectAll('circle')
+    .data(nodes)
+    .enter().append('circle')
+      .attr('id', getNodeId)
+      .attr('r', getNodeSize)
+      .attr('fill', getNodeColor)
+    .call(d3.drag()
+      .on("start", dragstarted)
+      .on("drag", dragged)
+      .on("end", dragended))
+    .on('mouseover', (d, i) => {
+      // Show amount of common friends
+      textBox.text(d.name + " " + (d.degree - 1));
+      d3.event.stopPropagation();
+    });
 
   simulation.nodes(nodes).on('tick', () => {
     linkElements

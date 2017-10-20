@@ -8,7 +8,8 @@ const parseData = function(userId, network) {
   const linkMap = [];
   
   for (node of network) {
-      nodes.push({id: node.id, name: node.name, degree: node.friends.length});
+      // Add one to the degree to account the egocenter
+      nodes.push({id: node.id, name: node.name, degree: node.friends.length + 1});
   }
   
   for (node of network) {
@@ -34,6 +35,7 @@ const parseData = function(userId, network) {
         // No friends in common
         const nodeIndex = nodes.findIndex(n => n.id === node.id);
         if (nodeIndex !== -1) {
+          // Only the egocenter
           nodes[nodeIndex].degree = 1;
         }
 
