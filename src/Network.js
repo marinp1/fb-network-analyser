@@ -27,7 +27,9 @@ function getActiveNodeSize(node) {
 }
 
 function getNodeId(node) {
-  return node.id.replace('/','___').replace('.','___');
+  return node.id
+    .split('/').join('___')
+    .split('.').join('___');
 }
 
 function getEdgeColor(edge) {
