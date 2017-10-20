@@ -7,7 +7,7 @@ function getTenClosestFriends(nodes) {
   const sortedNodes = _.sortBy(nodes, node => -node.degree);
   console.log('Ten closest friends:')
   // i = 0 is the egocenter
-  for (let i = 1; i < 10; i++) {
+  for (let i = 1; i <= 10; i++) {
     console.log(`${i}: ${sortedNodes[i].name} with ${sortedNodes[i].degree - 1} common friends`)
   }
 }
@@ -72,4 +72,75 @@ function getGlobalClusteringCoefficient(nodes) {
   const clusteringCoefficients = nodes.map(node => getLocalClusteringCoefficient(node.id));
   const globalClusteringCoefficient = _.reduce(clusteringCoefficients, (a, b) => a + b, 0) / nodes.length;
   console.log(globalClusteringCoefficient);
+}
+
+// Implementation of Floyd-Marshall -algorithm
+// TODO: Move nodemap somewhere else
+function getDistances(nodes, links) {
+  const nodeMap = new Map();
+
+  const distances = new Array(nodes.length);
+  for (let i = 0; i < nodes.length; i++) {
+    nodeMap.set(nodes[i].id, i);
+    distances[i] = new Array(nodes.length).fill(Number.POSITIVE_INFINITY);
+  }
+
+  for (let i = 0; i < nodes.length; i++) {
+    distances[i][i] = 0;
+  }
+
+  for (let i = 0; i < links.length; i++) {
+    distances[nodeMap.get(links[i].source)][nodeMap.get(links[i].target)] = 1;
+    distances[nodeMap.get(links[i].target)][nodeMap.get(links[i].source)] = 1;
+  }
+
+  for (let k = 0; k < nodes.length; k++) {
+    for (let i = 0; i < nodes.length; i++) {
+      for (let j = 0; j < nodes.length; j++) {
+        if (distances[i][j] > distances[i][k] + distances[k][j]) {
+          distances[i][j] = distances[i][k] + distances[k][j]
+        }
+      }
+    }
+  }
+
+  return {distances, nodeMap};
+}
+
+// TODO: Move distance calculation somewhere else
+function getClosenessCentralityIndex(id, nodes, links) {
+  const distanceResult = getDistances(nodes, links);
+
+  const distances = distanceResult.distances;
+  const nodeMap = distanceResult.nodeMap;
+
+  const closenessCentralityIndex = _.reduce(distances[nodeMap.get(id)], (a, b) => {
+    if (a === Number.POSITIVE_INFINITY) return b;
+    if (b === Number.POSITIVE_INFINITY) return a;
+    return a + b;
+  }) / (nodes.length - 1);
+
+  return closenessCentralityIndex;
+}
+
+function getNodeRankingByClosenessCentrality(nodes, links) {
+
+  const closenessCentralities = new Map();
+  let progress = 0;
+  const progressMark = Math.floor(nodes.length * 0.1);
+  let n = 0;
+  nodes.forEach(node => {
+    closenessCentralities.set(node.id, getClosenessCentralityIndex(node.id, nodes, links))
+    if (n % progressMark === 0) {
+      console.log(`${Math.floor(n * 100 / nodes.length)} % done...`)
+    }
+    n++;
+  });
+
+  const sortedNodes = _.sortBy(nodes, node => closenessCentralities.get(node.id));
+  console.log('Ten nodes with smallest closeness centrality index:')
+  for (let i = 1; i <= 10; i++) {
+    console.log(`${i}: ${sortedNodes[i].name} with value of ${closenessCentralities.get(sortedNodes[i].id)}`)
+  }
+
 }
