@@ -5,8 +5,9 @@ Uses [headless Chrome](https://github.com/GoogleChrome/puppeteer) for web scrapi
 ![My Facebook network](https://raw.githubusercontent.com/marinp1/fb-network-analyser/master/images/network.png "My Facebook Network")
 
 ## Features
+* Search friends by their name
+* Hovering over a node displays the name and node's degree in top-left corner
 * Node size is based on the node's degree
-* Hovering over a node displays the name and node's degree in top-left corner.
 * Edges from egocenter are red
 * Drag and drop supported
 
@@ -15,9 +16,9 @@ Uses [headless Chrome](https://github.com/GoogleChrome/puppeteer) for web scrapi
 **Haven't checked if the tool is against Facebook's terms of service, so use at your own risk!**
 
 1. Create file called **.env** to main directory add fill in correct data according to **.env.template** file (email address, password and facebook username (starting with **/**)).
-2. Start web scraping with command `yarn fetch`.
+2. Start web scraping with `yarn fetch`. Command `yarn fetch -- --debug` makes the browser window visible.
 3. Wait until scraping is finished, it'll take some until script starts logging to console.
-4. Start visualization with command `yarn start`.
+4. Start visualization with `yarn start`.
 
 ## Known issues and notes
 * Web scraping takes some time, so be patient. There's some delays included just in case.
