@@ -1,0 +1,32 @@
+[
+  {
+    "id": "/a",
+    "name": "A",
+    "degree": 4
+  },
+  {
+    "id": "/b",
+    "name": "B",
+    "degree": 2
+  },
+  {
+    "id": "/c",
+    "name": "C",
+    "degree": 4
+  },
+  {
+    "id": "/d",
+    "name": "D",
+    "degree": 2
+  },
+  {
+    "id": "/e",
+    "name": "E",
+    "degree": 3
+  },
+  {
+    "id": "/f",
+    "name": "F",
+    "degree": 1
+  }
+]

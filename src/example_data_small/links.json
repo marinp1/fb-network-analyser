@@ -1,0 +1,34 @@
+[
+  {
+    "source": "/a",
+    "target": "/b"
+  },
+  {
+    "source": "/a",
+    "target": "/c"
+  },
+  {
+    "source": "/a",
+    "target": "/e"
+  },
+  {
+    "source": "/a",
+    "target": "/f"
+  },
+  {
+    "source": "/b",
+    "target": "/c"
+  },
+  {
+    "source": "/c",
+    "target": "/d"
+  },
+  {
+    "source": "/c",
+    "target": "/e"
+  },
+  {
+    "source": "/d",
+    "target": "/e"
+  }
+]

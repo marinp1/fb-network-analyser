@@ -114,8 +114,8 @@ export function createNetwork() {
       .on("drag", dragged)
       .on("end", dragended))
     .on('mouseover', (d, i) => {
-      // Show amount of common friends
-      textBox.text(d.name + " " + (d.degree - 1));
+      // Show nodes's degree
+      textBox.text(d.name + " " + d.degree);
       d3.event.stopPropagation();
     });
 

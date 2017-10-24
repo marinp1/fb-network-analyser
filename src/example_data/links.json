@@ -9,7 +9,7 @@
   },
   {
     "source": "/a",
-    "target": "/e"
+    "target": "/d"
   },
   {
     "source": "/a",
@@ -17,7 +17,15 @@
   },
   {
     "source": "/b",
-    "target": "/c"
+    "target": "/d"
+  },
+  {
+    "source": "/b",
+    "target": "/e"
+  },
+  {
+    "source": "/b",
+    "target": "/g"
   },
   {
     "source": "/c",
@@ -25,10 +33,42 @@
   },
   {
     "source": "/c",
-    "target": "/e"
+    "target": "/f"
   },
   {
     "source": "/d",
     "target": "/e"
+  },
+  {
+    "source": "/d",
+    "target": "/f"
+  },
+  {
+    "source": "/d",
+    "target": "/g"
+  },
+  {
+    "source": "/e",
+    "target": "/g"
+  },
+  {
+    "source": "/f",
+    "target": "/g"
+  },
+  {
+    "source": "/f",
+    "target": "/h"
+  },
+  {
+    "source": "/g",
+    "target": "/h"
+  },
+  {
+    "source": "/h",
+    "target": "/i"
+  },
+  {
+    "source": "/i",
+    "target": "/j"
   }
 ]

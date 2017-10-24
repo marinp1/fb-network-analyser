@@ -1,32 +1,52 @@
 [
   {
     "id": "/a",
-    "name": "A",
+    "name": "Andre",
     "degree": 4
   },
   {
     "id": "/b",
-    "name": "B",
-    "degree": 2
-  },
-  {
-    "id": "/c",
-    "name": "C",
+    "name": "Beverly",
     "degree": 4
   },
   {
+    "id": "/c",
+    "name": "Carol",
+    "degree": 3
+  },
+  {
     "id": "/d",
-    "name": "D",
-    "degree": 2
+    "name": "Diane",
+    "degree": 6
   },
   {
     "id": "/e",
-    "name": "E",
+    "name": "Ed",
     "degree": 3
   },
   {
     "id": "/f",
-    "name": "F",
+    "name": "Fernando",
+    "degree": 5
+  },
+  {
+    "id": "/g",
+    "name": "Garth",
+    "degree": 5
+  },
+  {
+    "id": "/h",
+    "name": "Heather",
+    "degree": 3
+  },
+  {
+    "id": "/i",
+    "name": "Ike",
+    "degree": 2
+  },
+  {
+    "id": "/j",
+    "name": "Jane",
     "degree": 1
   }
 ]
