@@ -3,28 +3,6 @@ const _ = require('underscore');
 const nodes = require('./data/nodes.json');
 const links = require('./data/links.json');
 
-function getTenClosestFriends(nodes) {
-  const sortedNodes = _.sortBy(nodes, node => -node.degree);
-  console.log('Ten closest friends:')
-  // i = 0 is the egocenter
-  for (let i = 1; i <= 10; i++) {
-    console.log(`${i}: ${sortedNodes[i].name} with ${sortedNodes[i].degree - 1} common friends`)
-  }
-}
-
-function getTenLeastCloseFriends(nodes) {
-  const sortedNodes = _.sortBy(nodes, node => node.degree);
-  console.log('Ten least close friends:')
-  for (let i = 0; i < 9; i++) {
-    console.log(`${i + 1}: ${sortedNodes[i].name} with ${sortedNodes[i].degree - 1} common friends`)
-  }
-}
-
-function getAverageDegree(nodes, links) {
-  const averageDegree = (2 * links.length) / nodes.length;
-  console.log(averageDegree);
-}
-
 class Node {
   constructor(id) {
     this.id = id;
@@ -36,111 +14,172 @@ class Node {
   }
 }
 
-const nodeList = [];
-const nodeMap = new Map();
-for (node of nodes) {
-  const newNode = new Node(node.id);
-  nodeList.push(newNode);
-  nodeMap.set(node.id, newNode);
-}
-
-for (link of links) {
-  nodeMap.get(link.source).addNeighbour(link.target);
-  nodeMap.get(link.target).addNeighbour(link.source);
-}
-
-function getLocalClusteringCoefficient(id) {
-  
-  const neighbours = nodeMap.get(id).neighbours;
-  if (neighbours.length === 1) return 0;
-
-  let links = 0;
-
-  for (w of neighbours) {
-    for (u of neighbours) {
-      if (_.contains(nodeMap.get(w).neighbours, u)) {
-        links += 0.5;
-      }
-    }
-  }
-
-  return (2 * links) / (neighbours.length * (neighbours.length - 1));
-
-}
-
-function getGlobalClusteringCoefficient(nodes) {
-  const clusteringCoefficients = nodes.map(node => getLocalClusteringCoefficient(node.id));
-  const globalClusteringCoefficient = _.reduce(clusteringCoefficients, (a, b) => a + b, 0) / nodes.length;
-  console.log(globalClusteringCoefficient);
-}
-
-// Implementation of Floyd-Marshall -algorithm
-// TODO: Move nodemap somewhere else
-function getDistances(nodes, links) {
+function getNodeList(nodes, links) {
+  const nodeList = [];
   const nodeMap = new Map();
-
-  const distances = new Array(nodes.length);
-  for (let i = 0; i < nodes.length; i++) {
-    nodeMap.set(nodes[i].id, i);
-    distances[i] = new Array(nodes.length).fill(Number.POSITIVE_INFINITY);
+  for (node of nodes) {
+    const newNode = new Node(node.id);
+    nodeList.push(newNode);
+    nodeMap.set(node.id, newNode);
   }
 
-  for (let i = 0; i < nodes.length; i++) {
-    distances[i][i] = 0;
+  for (link of links) {
+    nodeMap.get(link.source).addNeighbour(nodeMap.get(link.target));
+    nodeMap.get(link.target).addNeighbour(nodeMap.get(link.source));
   }
 
-  for (let i = 0; i < links.length; i++) {
-    distances[nodeMap.get(links[i].source)][nodeMap.get(links[i].target)] = 1;
-    distances[nodeMap.get(links[i].target)][nodeMap.get(links[i].source)] = 1;
-  }
+  return nodeList;
+}
 
-  for (let k = 0; k < nodes.length; k++) {
-    for (let i = 0; i < nodes.length; i++) {
-      for (let j = 0; j < nodes.length; j++) {
-        if (distances[i][j] > distances[i][k] + distances[k][j]) {
-          distances[i][j] = distances[i][k] + distances[k][j]
+function getBetweennessCentralities(nodes, links) {
+  // Transform node and link data to OO-style
+  const nodeList = getNodeList(nodes, links);
+
+  // Constructs path from BFS result
+  function construct_path(targetId, startId, path) {
+
+    // All possible shortest paths between start and target
+    const paths = [];
+
+    function next_step(currentPath, id) {
+      if (id === startId) {
+        // Add generated path
+        paths.push(currentPath);
+      } else {
+
+        // Get the nodes which point to this node
+        const parents = path.get(id);
+
+        if (parents.length === 1) {
+          currentPath.push(parents[0]);
+          next_step(currentPath, parents[0]);
+        } else {
+
+          // If the path branches, create new paths
+          // And copy the current path to it
+          for (let i = 1; i < parents.length; i++) {
+            const branch = currentPath.concat(parents[i]);
+            next_step(branch, parents[i]);
+          }
+
+          // Continue with the original path as well
+          currentPath.push(parents[0]);
+          next_step(currentPath, parents[0]);
+
         }
       }
     }
-  }
 
-  return {distances, nodeMap};
-}
+    // Initiate loop
+    next_step([targetId], targetId);
 
-// TODO: Move distance calculation somewhere else
-function getClosenessCentralityIndex(id, nodes, links) {
-  const distanceResult = getDistances(nodes, links);
+    // Get length of shortest path
+    let minLength = paths[0].length;
 
-  const distances = distanceResult.distances;
-  const nodeMap = distanceResult.nodeMap;
-
-  const closenessCentralityIndex = _.reduce(distances[nodeMap.get(id)], (a, b) => {
-    if (a === Number.POSITIVE_INFINITY) return b;
-    if (b === Number.POSITIVE_INFINITY) return a;
-    return a + b;
-  }) / (nodes.length - 1);
-
-  return closenessCentralityIndex;
-}
-
-function getNodeRankingByClosenessCentrality(nodes, links) {
-
-  const closenessCentralities = new Map();
-  let progress = 0;
-  const progressMark = Math.floor(nodes.length * 0.1);
-  let n = 0;
-  nodes.forEach(node => {
-    closenessCentralities.set(node.id, getClosenessCentralityIndex(node.id, nodes, links))
-    if (n % progressMark === 0) {
-      console.log(`${Math.floor(n * 100 / nodes.length)} % done...`)
+    // Reverse paths
+    for (const arr of paths) {
+      if (arr.length < minLength) minLength = arr.length;
+      arr.reverse();
     }
-    n++;
-  });
 
-  const sortedNodes = _.sortBy(nodes, node => closenessCentralities.get(node.id));
-  console.log('Ten nodes with smallest closeness centrality index:')
-  for (let i = 1; i <= 10; i++) {
-    console.log(`${i}: ${sortedNodes[i].name} with value of ${closenessCentralities.get(sortedNodes[i].id)}`)
+    // Remove only shortest paths
+    const minLengthPaths = paths.filter(_ => _.length === minLength);
+    return minLengthPaths;
   }
 
+  function BFS(start, target) {
+    const open_set = [];
+    const visited = new Set();
+
+    const path = new Map();
+
+    let found = false;
+
+    open_set.push(start);
+
+    while (open_set.length > 0) {
+      const currentNode = open_set.shift();
+
+      // If target has been found, finish current loop
+      // In order to get all shortest paths
+      if (target.id === currentNode.id) {
+        found = true;
+      };
+
+      if (!found) {
+        for (const neighbour of currentNode.neighbours) {
+          if (!visited.has(neighbour.id)) {
+
+            // Handle possible branching, node may have to incoming links
+            if (path.has(neighbour.id) && path.get(neighbour.id).length > 0) {
+              if (path.get(neighbour.id).indexOf(currentNode.id) === -1) {
+                path.get(neighbour.id).push(currentNode.id);
+              }
+            } else {
+              path.set(neighbour.id, [ currentNode.id ]);
+            }
+            // Add child node to next iteration
+            open_set.push(neighbour);
+          }
+        }
+      }
+
+      visited.add(currentNode.id);
+
+    }
+
+    return construct_path(target.id, start.id, path);
+  }
+
+  // Constructs all shortest paths between nodes
+  function construct_paths() {
+    const paths = new Map();
+    const visited = new Set();
+
+    for (const v1 of nodeList) {
+      for (const v2 of nodeList) {
+        // Undirected network
+        const identifier = [v1.id, v2.id].sort().join();
+        if (!visited.has(identifier)) {
+          paths.set(identifier, BFS(v1, v2));
+        }
+        visited.add(identifier);
+      }
+    }
+
+    return paths;
+  }
+
+  function getBetweenness(allPaths, node) {
+    let betweenness = 0;
+    const visited = new Set();
+
+    for (const v1 of nodeList) {
+      for (const v2 of nodeList) {
+        // Undirected network
+        const identifier = [v1.id, v2.id].sort().join();
+        if (v1.id !== v2.id && v1.id !== node.id && v2.id !== node.id && !visited.has(identifier)) {
+          const paths = allPaths.get(identifier);
+          // Get number of paths that go through given node
+          const sum = paths.map(_ => _.indexOf(node.id) === -1 ? 0 : 1).reduce((a, b) => a + b);
+          // Increment betweenness by the ratio
+          betweenness += sum / paths.length;
+        }
+        visited.add(identifier);
+      }
+    }
+    return betweenness;
+  }
+
+  const paths = construct_paths();
+  const result = new Map();
+
+  for (const v of nodeList) {
+    result.set(v.id, getBetweenness(paths, v));
+  }
+
+  return result;
+
 }
+
+getBetweennessCentralities(nodes, links);
